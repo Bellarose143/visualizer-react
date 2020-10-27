@@ -1,12 +1,14 @@
 import React from 'react';
+import {mergeSort} from './Algorithms'
 import './Sorting.css'
 
-// Change this value for the number of bars (value) in the array.
 const ARRAY_SIZE = 310;
+
+const SPEED = 5;
 
 const MAIN_COLOR = 'red';
 
-const ACCENT_COLOR = 'green';
+const ACCENT_COLOR = 'white';
 
 
 export default class Sorting extends React.Component {
@@ -31,6 +33,30 @@ export default class Sorting extends React.Component {
         this.setState({array});
     }
 
+    merge() {
+        const animations = mergeSort(this.state.array);
+        for (let i = 0; i < animations.length; i++) {
+          const arrayBars = document.getElementsByClassName('array-bar');
+          const isColorChange = i % 3 !== 2;
+          if (isColorChange) {
+            const [barOneIdx, barTwoIdx] = animations[i];
+            const barOneStyle = arrayBars[barOneIdx].style;
+            const barTwoStyle = arrayBars[barTwoIdx].style;
+            const color = i % 3 === 0 ? ACCENT_COLOR : MAIN_COLOR;
+            setTimeout(() => {
+              barOneStyle.backgroundColor = color;
+              barTwoStyle.backgroundColor = color;
+            }, i * SPEED);
+          } else {
+            setTimeout(() => {
+              const [barOneIdx, newHeight] = animations[i];
+              const barOneStyle = arrayBars[barOneIdx].style;
+              barOneStyle.height = `${newHeight}px`;
+            }, i * SPEED);
+          }
+        }
+      }
+
     render() {
         const {array} = this.state;
 
@@ -45,7 +71,7 @@ export default class Sorting extends React.Component {
                     }}></div>
                 ))}
                 <button onClick={() => this.resetArray()}>Randomize Array</button>
-                <button onClick={() => this.mergeSort()}>Merge Sort</button>
+                <button onClick={() => this.merge()}>Merge Sort</button>
             </div>
         );
     }
