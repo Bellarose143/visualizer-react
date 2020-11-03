@@ -120,51 +120,76 @@ function doBubble(auxiliaryArray, animations) {
 
 export function quickSort(array) {
   let animations  = [];
-    let auxillaryArray = array.slice();
-    doQuick(auxillaryArray, 0, auxillaryArray.length - 1, animations);
-    array = auxillaryArray;
+    let auxilliaryArray = array.slice();
+    doQuick(auxilliaryArray, 0, auxilliaryArray.length - 1, animations);
+    array = auxilliaryArray;
     return [animations, array];
 }
 
-function doQuick(auxillaryArray, startIndex, endIndex, animations) {
+function doQuick(auxilliaryArray, startIndex, endIndex, animations) {
   let pivotIndex;
     if (startIndex < endIndex) {
-        pivotIndex = partitionArray(auxillaryArray, startIndex, endIndex, animations);
-        doQuick(auxillaryArray, startIndex, pivotIndex - 1, animations);
-        doQuick(auxillaryArray, pivotIndex + 1, endIndex, animations);
+        pivotIndex = partitionArray(auxilliaryArray, startIndex, endIndex, animations);
+        doQuick(auxilliaryArray, startIndex, pivotIndex - 1, animations);
+        doQuick(auxilliaryArray, pivotIndex + 1, endIndex, animations);
     }
 }
 
-function partitionArray(auxillaryArray, startIndex, endIndex, animations) {
+function partitionArray(auxilliaryArray, startIndex, endIndex, animations) {
   let pivotIndex = randomIntFromInterval(startIndex, endIndex);
     
     animations.push(["comparision1", pivotIndex, endIndex]);
-    animations.push(["swap", pivotIndex, auxillaryArray[endIndex]]);
-    animations.push(["swap", endIndex, auxillaryArray[pivotIndex]]);
+    animations.push(["swap", pivotIndex, auxilliaryArray[endIndex]]);
+    animations.push(["swap", endIndex, auxilliaryArray[pivotIndex]]);
     animations.push(["comparision2", pivotIndex, endIndex]);
-    swap(auxillaryArray, pivotIndex, endIndex);
+    swap(auxilliaryArray, pivotIndex, endIndex);
 
     let lessTailIndex = startIndex;
 
     for(let i = startIndex; i < endIndex; ++i) {
         animations.push(["comparision1", i, endIndex]);
         animations.push(["comparision2", i, endIndex]);
-        if(auxillaryArray[i] <= auxillaryArray[endIndex]) {
+        if(auxilliaryArray[i] <= auxilliaryArray[endIndex]) {
             animations.push(["comparision1", i, lessTailIndex]);
-            animations.push(["swap", i, auxillaryArray[lessTailIndex]]);
-            animations.push(["swap", lessTailIndex, auxillaryArray[i]]);
+            animations.push(["swap", i, auxilliaryArray[lessTailIndex]]);
+            animations.push(["swap", lessTailIndex, auxilliaryArray[i]]);
             animations.push(["comparision2", i, lessTailIndex]);
-            swap(auxillaryArray, i, lessTailIndex);
+            swap(auxilliaryArray, i, lessTailIndex);
             lessTailIndex++;
         }
     }
     animations.push(["comparision1", lessTailIndex, endIndex]);
-    animations.push(["swap", endIndex, auxillaryArray[lessTailIndex]]);
-    animations.push(["swap", lessTailIndex, auxillaryArray[endIndex]]);
+    animations.push(["swap", endIndex, auxilliaryArray[lessTailIndex]]);
+    animations.push(["swap", lessTailIndex, auxilliaryArray[endIndex]]);
     animations.push(["comparision2", lessTailIndex, endIndex]);
     
-    swap(auxillaryArray, lessTailIndex, endIndex);
+    swap(auxilliaryArray, lessTailIndex, endIndex);
     return lessTailIndex;
+}
+
+export function selectionSort(array) {
+  let animations  = [];
+  let auxilliaryArray = array.slice();
+  doSelection(auxilliaryArray, animations);
+  array = auxilliaryArray;
+  return [animations, array];
+}
+
+function doSelection(auxilliaryArray, animations) {
+  const N = auxilliaryArray.length;
+    for (let i = 0; i < N - 1; i++) {
+        let minIndex = i; 
+        for (let j = i + 1; j < N; j++) {
+            animations.push(["comparision1", j, minIndex]);
+            animations.push(["comparision2", j, minIndex]);
+            if (auxilliaryArray[j] < auxilliaryArray[minIndex]) {
+                minIndex = j;
+            }
+        }
+        animations.push(["swap", minIndex, auxilliaryArray[i]]);
+        animations.push(["swap", i, auxilliaryArray[minIndex]]);
+        swap(auxilliaryArray, minIndex, i);
+    }
 }
 
 function swap(secondArray, firstIndex, secondIndex) {
@@ -174,6 +199,5 @@ function swap(secondArray, firstIndex, secondIndex) {
 }
 
 function randomIntFromInterval(min, max) {
-  // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
