@@ -10,7 +10,7 @@ export default class TopBar extends React.Component {
     console.log(window.location.pathname);
     if (window.location.pathname == "/") {
       return (
-        <Navbar bg="dark" variant="dark">
+        <Navbar id='topBar' bg="dark" variant="dark">
           <Navbar.Brand href="/">
             <img src={logo} style={{ height: 32, width: 32, marginTop: -7 }} />
           </Navbar.Brand>
@@ -29,7 +29,7 @@ export default class TopBar extends React.Component {
       );
     } else {
       return (
-        <Navbar bg="dark" variant="dark">
+        <Navbar id='topBar' bg="dark" variant="dark">
           <Navbar.Brand href="/">
             <img src={logo} style={{ height: 32, width: 32, marginTop: -7 }} />
           </Navbar.Brand>

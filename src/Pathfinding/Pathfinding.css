@@ -1,0 +1,25 @@
+h3 {
+  color: white;
+}
+
+p {
+  color: white;
+}
+
+button {
+  color: white;
+}
+
+.grid {
+  color: white;
+  margin-top: 25px;
+  margin-left: 25px;
+  line-height: 0;
+}
+
+.pathButtons {
+  position: absolute;
+  width: auto;
+  left: 40%;
+  align-items: center;
+}

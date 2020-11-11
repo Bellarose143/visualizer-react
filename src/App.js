@@ -11,12 +11,12 @@ var mode = "Sort";
 function App() {
   return (
     <Router>
-      <div id="myApp">
+      <div id='myApp'>
         <TopBar/>
         <Switch>
-          <Route exact path="/" component={Sorting} />
-          <Route path="/pathfinder" component={Pathfinder} />
-          <Route path="/sudoku" component={Sudoku} />
+          <Route exact path='/' component={Sorting} />
+          <Route path='/pathfinder' component={Pathfinder} />
+          <Route path='/sudoku' component={Sudoku} />
         </Switch>
       </div>
     </Router>
