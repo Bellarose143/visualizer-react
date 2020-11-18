@@ -11,6 +11,7 @@ import {
   AStar,
   getShortestPath,
   primMaze,
+  primMaze2,
 } from "./Algorithms";
 
 export default class Pathfinder extends React.Component {
@@ -21,9 +22,9 @@ export default class Pathfinder extends React.Component {
       SR: 7,
       SC: 5,
       FR: 35,
-      FC: 95,
+      FC: 65,
       numRow: 40,
-      numCol: 100,
+      numCol: 70,
       mouseIsPressed: false,
       changingStart: false,
       changingFinish: false,
@@ -82,7 +83,6 @@ export default class Pathfinder extends React.Component {
     for (let row = 0; row < this.state.numRow; row++) {
       for (let col = 0; col < this.state.numCol; col++) {
         let n = document.getElementById(`node-${row}-${col}`);
-        console.log(n);
         if (
           n &&
           (n.className === "node node-visited" ||
@@ -243,6 +243,54 @@ export default class Pathfinder extends React.Component {
     });
   }
 
+  generateRandomMaze() {
+    if (this.state.rendering || this.state.generatingMaze) {
+      return;
+    }
+    this.setState({ rendering: true });
+    setTimeout(() => {
+      const { grid } = this.state;
+      const startNode = grid[this.state.SR][this.state.SC];
+      const finishNode = grid[this.state.FR][this.state.FC];
+      const walls = primMaze(grid, startNode, finishNode);
+      this.animateMaze(walls);
+    }, 7);
+  }
+
+  generateRecursiveDivisionMaze() {
+    if (this.state.rendering || this.state.generatingMaze) {
+      return;
+    }
+    this.setState({ rendering: true });
+    setTimeout(() => {
+      const { grid } = this.state;
+      const startNode = grid[this.state.SR][this.state.SC];
+      const finishNode = grid[this.state.FR][this.state.FC];
+      const walls = primMaze2(grid, startNode, finishNode);
+      this.animateMaze(walls);
+    }, 5);
+  }
+
+  animateMaze = (walls) => {
+    for (let i = 0; i <= walls.length; i++) {
+      if (i === walls.length) {
+        setTimeout(() => {
+          this.clearVisualizer();
+          let newGrid = getNewGridWithMaze(this.state.grid, walls);
+          this.setState({ grid: newGrid, rendering: false });
+        }, i * 7);
+        return;
+      }
+      let wall = walls[i];
+      let node = this.state.grid[wall[0]][wall[1]];
+      setTimeout(() => {
+        //Walls
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          "node node-wall";
+      }, i * 7);
+    }
+  };
+
   render() {
     const grid = this.state.grid;
     return (
@@ -278,78 +326,106 @@ export default class Pathfinder extends React.Component {
           class={"pathButtons"}
           style={{ marginTop: "10px", display: "block" }}
         >
-          <DropdownButton
-            id="dropdown-basic-button"
-            style={{ left: "25%" }}
-            title={`Algorithm: ${
-              this.state.algorithms[this.state.currentAlgorithm]
-            }`}
-          >
-            <Dropdown.Item onClick={() => this.setAlgorithm("0")}>
-              Breadth First
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => this.setAlgorithm("1")}>
-              Dijkstra
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => this.setAlgorithm("2")}>
-              A Star
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => this.setAlgorithm("3")}>
-              Depth First
-            </Dropdown.Item>
-          </DropdownButton>
-          <Button
-            variant="primary"
-            onClick={() => {
-              primMaze(this.state.grid);
-              this.setState({ finish: false });
-              this.clearVisitedAndPath();
-            }}
-            style={{ marginLeft: "5px", height: "40px" }}
-            disabled={this.state.rendering}
-          >
-            Generate Maze
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              this.clearVisitedAndPath();
-              this.visualizePathfinding();
-            }}
-            style={{ marginLeft: "5px", height: "40px" }}
-            disabled={this.state.rendering}
-          >
-            Visualize
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              this.setState({ finish: false });
-              this.clearVisitedAndPath();
-              this.clearVisualizer();
-            }}
-            style={{ marginLeft: "5px", height: "40px" }}
-            disabled={this.state.rendering}
-          >
-            Clear
-          </Button>
-          <DropdownButton
-            id="dropdown-basic-button"
-            style={{ position: "absolute", left: "30%" }}
-            title={`Speed: ${this.state.speed}`}
-          >
-            <Dropdown.Item onClick={() => this.setSpeed("Slow")}>
-              Slow
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => this.setSpeed("Medium")}>
-              Medium
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => this.setSpeed("Fast")}>
-              Fast
-            </Dropdown.Item>
-          </DropdownButton>
+          <aside>
+            <DropdownButton
+              id="dropdown-basic-button"
+              title={`Algorithm: ${
+                this.state.algorithms[this.state.currentAlgorithm]
+              }`}
+              disabled={this.state.rendering}
+            >
+              <Dropdown.Item onClick={() => this.setAlgorithm("0")}>
+                Breadth First
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => this.setAlgorithm("1")}>
+                Dijkstra
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => this.setAlgorithm("2")}>
+                A Star
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => this.setAlgorithm("3")}>
+                Depth First
+              </Dropdown.Item>
+            </DropdownButton>
+            <DropdownButton
+              id="dropdown-basic-button"
+              title={`Speed: ${this.state.speed}`}
+            >
+              <Dropdown.Item onClick={() => this.setSpeed("Slow")}>
+                Slow
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => this.setSpeed("Medium")}>
+                Medium
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => this.setSpeed("Fast")}>
+                Fast
+              </Dropdown.Item>
+            </DropdownButton>
+            <Button
+              variant="primary"
+              onClick={() => {
+                this.clearVisitedAndPath();
+                this.visualizePathfinding();
+              }}
+              style={{ marginLeft: "5px", height: "40px" }}
+              disabled={this.state.rendering}
+            >
+              Visualize
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                this.clearVisualizer();
+                this.generateRandomMaze();
+                this.setState({ finish: false });
+                this.clearVisitedAndPath();
+              }}
+              style={{ marginLeft: "5px", height: "40px" }}
+              disabled={this.state.rendering}
+            >
+              Generate Random Maze
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                this.clearVisualizer();
+                this.generateRecursiveDivisionMaze();
+                this.setState({ finish: false });
+                this.clearVisitedAndPath();
+              }}
+              style={{ marginLeft: "5px", height: "40px" }}
+              disabled={this.state.rendering}
+            >
+              Generate Recursive Maze
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                this.setState({ finish: false });
+                this.clearVisitedAndPath();
+                this.clearVisualizer();
+              }}
+              style={{ marginLeft: "5px", height: "40px" }}
+              disabled={this.state.rendering}
+            >
+              Clear
+            </Button>
+          </aside>
         </div>
       </>
     );
   }
 }
+
+const getNewGridWithMaze = (grid, walls) => {
+  let newGrid = grid.slice();
+  for (let wall of walls) {
+    let node = grid[wall[0]][wall[1]];
+    let newNode = {
+      ...node,
+      isWall: true,
+    };
+    newGrid[wall[0]][wall[1]] = newNode;
+  }
+  return newGrid;
+};

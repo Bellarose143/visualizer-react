@@ -8,18 +8,26 @@ p {
 
 button {
   color: white;
+
+  margin-top: 0% !important;
 }
 
 .grid {
   color: white;
   margin-top: 25px;
-  margin-left: 25px;
+  margin-bottom: 25px;
+  margin-left: 12.5%;
   line-height: 0;
 }
 
 .pathButtons {
   position: absolute;
   width: auto;
-  left: 40%;
+  left: 30%;
   align-items: center;
+}
+
+aside {
+  display: flex;
+  flex-direction: row;
 }
